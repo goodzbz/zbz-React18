@@ -5,7 +5,7 @@ console.log(ReactDOM);
 function App() {
 	const [num, setNum] = useState(100);
 	window.setNum = setNum;
-	return <div>{num}</div>;
+	return num == 3 ? <Children /> : <div>{num}</div>;
 }
 function Children() {
 	return (

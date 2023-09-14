@@ -99,7 +99,7 @@ function commitDeletion(ChildToDelete: FiberNode) {
 	if (rootHostNode !== null) {
 		const hostParent = getHostParent(ChildToDelete);
 		if (hostParent !== null) {
-			removeChild(rootHostNode, hostParent);
+			removeChild((rootHostNode as FiberNode).stateNode, hostParent);
 		}
 	}
 	ChildToDelete.return = null;
