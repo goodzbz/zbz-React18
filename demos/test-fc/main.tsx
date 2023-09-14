@@ -5,11 +5,7 @@ console.log(ReactDOM);
 function App() {
 	const [num, setNum] = useState(100);
 	window.setNum = setNum;
-	return (
-		<div>
-			<Children />
-		</div>
-	);
+	return <div>{num}</div>;
 }
 function Children() {
 	return (
@@ -20,5 +16,5 @@ function Children() {
 }
 
 ReactDOM.createRoot(document.querySelector('#root') as HTMLElement).render(
-	<Children />
+	<App />
 );
