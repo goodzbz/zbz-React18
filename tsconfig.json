@@ -1,0 +1,26 @@
+{
+	"compileOnSave": true,
+	"include": ["./packages/**/*"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"moduleResolution": "Node",
+		"strict": true,
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noImplicitReturns": false,
+		"skipLibCheck": true,
+		"typeRoots": ["./types", "./node_modules/@types/"],
+		"baseUrl": "./packages",
+		"paths": {
+			"hostConfig": ["./react-dom/src/hostConfig.ts"] //对应类型检查 但是rolup等打包文件还是无法识别 需要配置别名
+		} // 全局资源配置 直接以命名即可导入文件
+	}
+}
