@@ -5,7 +5,15 @@ console.log(ReactDOM);
 function App() {
 	const [num, setNum] = useState(100);
 	window.setNum = setNum;
-	return num == 3 ? <Children /> : <div>{num}</div>;
+	return (
+		<div
+			onClick={(e) => {
+				console.log(e.target);
+			}}
+		>
+			{num}
+		</div>
+	);
 }
 function Children() {
 	return (
