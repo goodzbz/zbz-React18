@@ -10,9 +10,9 @@ import { ReactElementType } from 'shared/ReactTypes';
 import { reconcileChildFibers, mountChildFibers } from '../src/childFibers';
 import { renderWithHooks } from './fiberHooks';
 
-//递归阶段中的递阶段
+// 递归阶段中的递阶段
 export const beginWork = (wip: FiberNode) => {
-	//比较,返回子fiberNode
+	// 比较,返回子fiberNode
 	switch (wip.tag) {
 		case HostRoot:
 			return updateHostRoot(wip);
@@ -31,8 +31,8 @@ export const beginWork = (wip: FiberNode) => {
 };
 
 function updateFunctionComponent(wip: FiberNode) {
-	const nextChildren = renderWithHooks(wip); //修改
-	reconcileChildren(wip, nextChildren); //返回子FiberNode
+	const nextChildren = renderWithHooks(wip); // 修改
+	reconcileChildren(wip, nextChildren); // 返回子FiberNode
 	return wip.child;
 }
 
@@ -42,27 +42,27 @@ function updateHostRoot(wip: FiberNode) {
 	const pending = updateQueue.shared.pending;
 	updateQueue.shared.pending = null;
 	const { memoizedState } = processUpdataQueue(baseState, pending);
-	//null
+	// null
 	wip.memoizedState = memoizedState;
 	const nextChildren = wip.memoizedState;
-	reconcileChildren(wip, nextChildren); //返回子FiberNode
+	reconcileChildren(wip, nextChildren); // 返回子FiberNode
 	return wip.child;
 }
 
 function updateHostComponent(wip: FiberNode) {
 	const nextProps = wip.pendingProps;
-	const nextChildren = nextProps.children; //修改
-	reconcileChildren(wip, nextChildren); //返回子FiberNode
+	const nextChildren = nextProps.children; // 修改
+	reconcileChildren(wip, nextChildren); // 返回子FiberNode
 	return wip.child;
 }
 
 function reconcileChildren(wip: FiberNode, children: ReactElementType) {
 	const current = wip.alternate;
 	if (current !== null) {
-		//update
+		// update
 		wip.child = reconcileChildFibers(wip, current?.child, children);
 	} else {
-		//mount
+		// mount
 		wip.child = mountChildFibers(wip, null, children);
 	}
 }

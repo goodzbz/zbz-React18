@@ -33,7 +33,7 @@ export const enqueueUpdate = <State>(
 ) => {
 	updateQueue.shared.pending = update;
 };
-//消费更新操作
+// 消费更新操作
 export const processUpdataQueue = <State>(
 	baseState: State,
 	pendingUpdate: Update<State> | null

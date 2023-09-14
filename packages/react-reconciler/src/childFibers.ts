@@ -1,4 +1,4 @@
-//生成子节点 标记的过程
+// 生成子节点 标记的过程
 
 import { Props, ReactElementType } from 'shared/ReactTypes';
 import {
@@ -7,12 +7,7 @@ import {
 	createWorkInProcess,
 } from './fiber';
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
-import {
-	FunctionComponent,
-	HostComponent,
-	HostText,
-	WorkTag,
-} from './workTags';
+import { HostText } from './workTags';
 import { ChildDeletion, Placement } from './fiberFlags';
 
 function ChildReconciler(shouldTrackEffect: boolean) {
@@ -36,15 +31,15 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		const key = element.key;
 		work: if (currentFiber !== null) {
 			if (currentFiber.key === key) {
-				//key相同
+				// key相同
 				if (element.$$typeof === REACT_ELEMENT_TYPE) {
 					if (currentFiber.type === element.type) {
-						//type相同
+						// type相同
 						const existing = useFiber(currentFiber, element.props);
 						existing.return = returnFiber;
 						return existing;
 					}
-					//删除旧的
+					// 删除旧的
 					deleteChild(returnFiber, currentFiber);
 					break work;
 				} else {
@@ -54,7 +49,7 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 					}
 				}
 			} else {
-				//删掉旧的
+				// 删掉旧的
 				deleteChild(returnFiber, currentFiber);
 			}
 		}
@@ -70,9 +65,9 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		content: string | number
 	) {
 		if (currentFiber !== null) {
-			//update
+			// update
 			if (currentFiber.tag === HostText) {
-				//类型没变 可以复用
+				// 类型没变 可以复用
 				const existing = useFiber(currentFiber, { content });
 				existing.return = returnFiber;
 				return existing;
@@ -85,7 +80,7 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 	}
 	function placeSingleChild(fiber: FiberNode) {
 		if (shouldTrackEffect && fiber.alternate === null) {
-			//首次渲染
+			// 首次渲染
 			fiber.flags |= Placement;
 			console.log(fiber.flags);
 		}
@@ -108,14 +103,14 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 					}
 			}
 		}
-		//TODO 多节点的情况 ul> li*3
-		//HostText
+		// TODO 多节点的情况 ul> li*3
+		// HostText
 		if (typeof newChild === 'string' || typeof newChild === 'number') {
 			return placeSingleChild(
 				reconcileSingleTextNode(returnFiber, currentFiber, newChild)
 			);
 		}
-		//兜底删除
+		// 兜底删除
 		if (currentFiber !== null) {
 			deleteChild(returnFiber, currentFiber);
 		}

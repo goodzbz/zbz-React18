@@ -10,7 +10,7 @@ import {
 import { ReactElementType } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
 
-//创建 FiberRootNode 和 HostRootFiber 并返回FiberRootNode
+// 创建 FiberRootNode 和 HostRootFiber 并返回FiberRootNode
 export function createContainer(container: Container) {
 	const hostRootFiber = new FiberNode(HostRoot, {}, null); // 谁才是FiberRootNode  我先前的理解是 hostRootFiber是根节点 错了 root才是 ，他是根节点的引用
 	const root = new FiberRootNode(container, hostRootFiber);
@@ -24,7 +24,7 @@ export function updateContainer(
 	root: FiberRootNode
 ) {
 	const hostRootFiber = root.current;
-	const update = createUpdate<ReactElementType | null>(element); //创建更新操作 element： 标签/State/State方法
+	const update = createUpdate<ReactElementType | null>(element); // 创建更新操作 element： 标签/State/State方法
 	enqueueUpdate(
 		// 添加到队列中
 		hostRootFiber.updateQueue as UpdateQueue<ReactElementType | null>,

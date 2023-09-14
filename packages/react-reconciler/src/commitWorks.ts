@@ -31,7 +31,7 @@ export const commitMutationEffects = (finishedWork: FiberNode) => {
 		) {
 			nextEffect = child;
 		} else {
-			//向上遍历 DFS
+			// 向上遍历 DFS
 			up: while (nextEffect !== null) {
 				commitMutationEffectsOnFiber(nextEffect);
 				const sibling: FiberNode | null = nextEffect.sibling;
@@ -51,7 +51,7 @@ const commitMutationEffectsOnFiber = (finishedWork: FiberNode) => {
 		commitPlacement(finishedWork);
 		finishedWork.flags &= ~Placement;
 	}
-	//flags Update
+	// flags Update
 	if ((flags & Update) !== NoFlags) {
 		commitUpdate(finishedWork);
 		finishedWork.flags &= ~Update;
@@ -71,21 +71,22 @@ const commitMutationEffectsOnFiber = (finishedWork: FiberNode) => {
 
 function commitDeletion(ChildToDelete: FiberNode) {
 	let rootHostNode: FiberNode | null = null;
-	//递归子树
+	// 递归子树
 	commitNestedComponent(ChildToDelete, (unmountFiber) => {
 		switch (unmountFiber.tag) {
 			case HostComponent:
 				if (rootHostNode === null) {
 					rootHostNode = unmountFiber;
 				}
-				//解绑ref
+				// 解绑ref
 				return;
 			case HostText:
 				if (rootHostNode === null) {
 					rootHostNode = unmountFiber;
 				}
+				break;
 			case FunctionComponent:
-				//TODO useEffect unmount
+				// TODO useEffect unmount
 				return;
 			default:
 				if (__DEV__) {
@@ -113,13 +114,13 @@ function commitNestedComponent(
 	while (true) {
 		onCommitUnmount(node);
 		if (node.child !== null) {
-			//向下遍历的过程
+			// 向下遍历的过程
 			node.child.return = node;
 			node = node.child;
 			continue;
 		}
 		if (node === root) {
-			//中止条件
+			// 中止条件
 			return;
 		}
 		while (node.sibling === null) {
@@ -134,7 +135,7 @@ function commitNestedComponent(
 }
 
 const commitPlacement = (finshedWork: FiberNode) => {
-	//parent Dom
+	// parent Dom
 	if (__DEV__) {
 		console.warn('执行Placement操作', finshedWork);
 	}

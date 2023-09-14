@@ -11,13 +11,13 @@ function prepareFreshStack(root: FiberRootNode) {
 }
 // 找到根节点 调用renderRoot方法
 export function scheduleUpdateOnFiber(fiber: FiberNode) {
-	//调度功能
+	// 调度功能
 	const root = markUpdateFromFiberToRoot(fiber);
 	renderRoot(root);
 }
 
 function markUpdateFromFiberToRoot(fiber: FiberNode) {
-	//找到当前节点的根  及 FiberRootNode
+	// 找到当前节点的根  及 FiberRootNode
 	let node = fiber;
 	let parent = node.return;
 	while (parent !== null) {
@@ -31,7 +31,7 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
 }
 
 function renderRoot(root: FiberRootNode) {
-	//初始化 ---》当前workInProgress指向
+	// 初始化 ---》当前workInProgress指向
 	prepareFreshStack(root);
 	do {
 		try {
@@ -43,7 +43,7 @@ function renderRoot(root: FiberRootNode) {
 			}
 			workInProgress = null;
 		}
-	} while (true); //为什么try catch 为是什么两层循环
+	} while (true); // 为什么try catch 为是什么两层循环
 
 	const finishedWork = root.current.alternate;
 	root.finishedWork = finishedWork;
@@ -60,20 +60,20 @@ function commitRoot(root: FiberRootNode) {
 	if (__DEV__) {
 		console.log('commit阶段开始', finishedWork);
 	}
-	//重置
+	// 重置
 	root.finishedWork = null;
-	//判断是否存在三个子阶段需要执行的操作
-	//root flags root subtreeFlags
+	// 判断是否存在三个子阶段需要执行的操作
+	// root flags root subtreeFlags
 	const subtreeHasEffect =
 		(finishedWork.subtreeFlags & MutationMask) !== NoFlags;
 	const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags;
 
 	if (subtreeHasEffect || rootHasEffect) {
-		//beforeMutation
-		//mutation Placement
+		// beforeMutation
+		// mutation Placement
 		finishedWork;
 		root.current = finishedWork;
-		//layout
+		// layout
 	} else {
 		root.current = finishedWork;
 	}

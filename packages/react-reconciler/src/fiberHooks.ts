@@ -1,7 +1,6 @@
 import internals from 'shared/internals';
 import { FiberNode } from './fiber';
-import { Dispatch } from 'react/src/currentDispatcher';
-import { Dispatcher } from 'react/src/currentDispatcher';
+import { Dispatch, Dispatcher } from 'react/src/currentDispatcher';
 import {
 	UpdateQueue,
 	createUpdate,
@@ -30,17 +29,17 @@ export function renderWithHooks(wip: FiberNode) {
 	wip.memoizedState = null;
 
 	if (wip.alternate !== null) {
-		//update
+		// update
 		currentDispatcher.current = HooksDispatcherOnUpdate;
 	} else {
-		//mount
+		// mount
 		currentDispatcher.current = HooksDispatcherOnMount;
 	}
 	const Component = wip.type;
 	const props = wip.pendingProps;
 	const children = Component(props);
 
-	//重置操作
+	// 重置操作
 	currentlyRenderingFiber = null;
 
 	return children;
@@ -57,7 +56,7 @@ const HooksDispatcherOnUpdate: Dispatcher = {
 function updateState<State>(
 	initialState: () => State | State
 ): [State, Dispatch<State>] {
-	//找到当前useState对应的hook数据
+	// 找到当前useState对应的hook数据
 	const hook = updateWorkInProgressHook();
 	// 计算新state的逻辑
 	const queue = hook.updateQueue as UpdateQueue<State>;
@@ -125,11 +124,11 @@ function mountWorkInProgressHook(): Hook {
 }
 
 function updateWorkInProgressHook(): Hook {
-	//TODO render阶段触发的更新
+	// TODO render阶段触发的更新
 
 	let nextCurrentHook: Hook | null;
 	if (currentHook === null) {
-		//这是这个FC update时候的第一个hook
+		// 这是这个FC update时候的第一个hook
 		const current = currentlyRenderingFiber?.alternate;
 		if (current !== null) {
 			nextCurrentHook = current?.memoizedState;

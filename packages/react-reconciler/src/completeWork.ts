@@ -18,17 +18,17 @@ function markUpdate(fiber: FiberNode) {
 }
 
 export const completeWork = (wip: FiberNode) => {
-	//递归中的归
+	// 递归中的归
 	const newProps = wip.pendingProps;
 	const current = wip.alternate;
 	switch (wip.tag) {
 		case HostComponent:
 			if (current !== null && wip.stateNode) {
-				//update
+				// update
 			} else {
-				//1.构建DOM
+				// 1.构建DOM
 				const instance = createInstance(wip.type);
-				//2. 将DOM插入到DOM树中
+				// 2. 将DOM插入到DOM树中
 				appendAllChildren(instance, wip);
 				wip.stateNode = instance;
 			}
@@ -48,6 +48,7 @@ export const completeWork = (wip: FiberNode) => {
 				bubbleProperties(wip);
 				return null;
 			}
+			break;
 		case HostRoot:
 			bubbleProperties(wip);
 			return null;
@@ -69,7 +70,7 @@ function appendAllChildren(parent: Container, wip: FiberNode) {
 			appendInitialChild(parent, node?.stateNode);
 		} else if (node.child !== null) {
 			node.child.return = node;
-			node = node.child; //得到单个的Dom，而非函数组件名
+			node = node.child; // 得到单个的Dom，而非函数组件名
 			continue;
 		}
 		if (node === wip) {

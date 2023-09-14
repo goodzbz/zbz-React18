@@ -3,18 +3,18 @@ import { FunctionComponent, HostComponent, WorkTag } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
 
-//ReactElement 数据--》 FiberNode 数据+关系 ----> 真实Dom
-//FiberNode
+// ReactElement 数据--》 FiberNode 数据+关系 ----> 真实Dom
+// FiberNode
 export class FiberNode {
 	type: any;
 	tag: WorkTag; // 类型标记
 	pendingProps: Props;
 	key: Key;
 	stateNode: any; // HostRootFiber stateNode指向FiberRootNode/ 类组件为该组件实例/ 原生Dom元素是Dom节点的引用
-	return: FiberNode | null; //父亲
-	sibling: FiberNode | null; //兄弟
-	child: FiberNode | null; //儿子
-	index: number; //儿子标号
+	return: FiberNode | null; // 父亲
+	sibling: FiberNode | null; // 兄弟
+	child: FiberNode | null; // 儿子
+	index: number; // 儿子标号
 	ref: Ref;
 	flags: Flags; // 操作标记
 
@@ -27,10 +27,10 @@ export class FiberNode {
 	constructor(tag: WorkTag, pendingProps: Props, key: Key) {
 		this.tag = tag;
 		this.key = key;
-		this.stateNode = null; //(DOM)
-		this.type = null; //(FunctionComponent)
+		this.stateNode = null; // (DOM)
+		this.type = null; // (FunctionComponent)
 
-		//生成树状结构
+		// 生成树状结构
 		this.return = null;
 		this.sibling = null;
 		this.child = null;
@@ -38,28 +38,28 @@ export class FiberNode {
 
 		this.ref = null;
 
-		//作为工作单元
+		// 作为工作单元
 		this.pendingProps = pendingProps;
 		this.memoizedProps = null;
 		this.updateQueue = null;
 		this.memoizedState = null;
 
 		this.alternate = null;
-		//副作用
+		// 副作用
 		this.flags = NoFlags;
 		this.subtreeFlags = NoFlags;
 		this.deletions = null;
 	}
 }
 
-//tag  FiberNode属于xx类型节点
+// tag  FiberNode属于xx类型节点
 // FiberRootNode        根--》HostRootFiber ---》 app（一代标签）
 export class FiberRootNode {
 	container: Container;
 	current: FiberNode;
-	finishedWork: FiberNode | null; //指向更新完成的hostRootFiber
+	finishedWork: FiberNode | null; // 指向更新完成的hostRootFiber
 	constructor(container: Container, hostRootFiber: FiberNode) {
-		//container 是元素  hostRootFiber
+		// container 是元素  hostRootFiber
 		this.container = container;
 		this.current = hostRootFiber;
 		hostRootFiber.stateNode = this;
@@ -73,14 +73,14 @@ export const createWorkInProcess = (
 ): FiberNode => {
 	let wip = current.alternate;
 	if (wip === null) {
-		//mount
+		// mount
 		wip = new FiberNode(current.tag, pendingProps, current.key);
 		wip.stateNode = current.stateNode;
 		wip.alternate = current;
 		current.alternate = wip;
 	} else {
 		// 为什么更新的时候要这么设计
-		//update   更新不应该是很多东西都发生变化么
+		// update   更新不应该是很多东西都发生变化么
 		wip.pendingProps = pendingProps;
 		wip.flags = NoFlags;
 		wip.subtreeFlags = NoFlags;
