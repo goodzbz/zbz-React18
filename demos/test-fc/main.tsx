@@ -4,14 +4,21 @@ import ReactDOM from 'react-dom';
 console.log(ReactDOM);
 function App() {
 	const [num, setNum] = useState(100);
-	window.setNum = setNum;
+	// setNum(100); re-render  render时期渲染是要报错的
+	console.log(1);
 	return (
 		<div
 			onClick={(e) => {
 				console.log(e.target);
 			}}
 		>
-			{num}
+			<span
+				onClick={(e) => {
+					console.log(e.target);
+				}}
+			>
+				this is a span
+			</span>
 		</div>
 	);
 }

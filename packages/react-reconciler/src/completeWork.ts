@@ -74,6 +74,7 @@ function appendAllChildren(parent: Container, wip: FiberNode) {
 		if (node.tag === HostComponent || node.tag === HostText) {
 			appendInitialChild(parent, node?.stateNode);
 		} else if (node.child !== null) {
+			// 针对 react组件来写的  要拿到child
 			node.child.return = node;
 			node = node.child; // 得到单个的Dom，而非函数组件名
 			continue;
@@ -81,7 +82,8 @@ function appendAllChildren(parent: Container, wip: FiberNode) {
 		if (node === wip) {
 			return;
 		}
-		while (node.sibling == null) {
+		while (node.sibling === null) {
+			// 字类的层级查找完毕 该向上回去
 			if (node.return === null || node.return === wip) {
 				return;
 			}

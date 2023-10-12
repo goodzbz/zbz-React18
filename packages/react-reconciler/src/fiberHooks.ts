@@ -11,9 +11,9 @@ import {
 import { Action } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
 
-let currentlyRenderingFiber: FiberNode | null = null;
-let workInProgressHook: Hook | null = null;
-let currentHook: Hook | null = null;
+let currentlyRenderingFiber: FiberNode | null = null; // 当前的fiber树
+let workInProgressHook: Hook | null = null; //挂载时操作的Hook
+let currentHook: Hook | null = null; // 更新时候的当前hook
 
 const { currentDispatcher } = internals;
 interface Hook {
@@ -24,7 +24,7 @@ interface Hook {
 
 export function renderWithHooks(wip: FiberNode) {
 	// 赋值操作
-	currentlyRenderingFiber = wip;
+	currentlyRenderingFiber = wip; //等下要通过currentlyRenderingFiber判断所在环境是否为函数环境
 	// 重置
 	wip.memoizedState = null;
 
@@ -117,7 +117,7 @@ function mountWorkInProgressHook(): Hook {
 			currentlyRenderingFiber.memoizedState = workInProgressHook;
 		}
 	} else {
-		// mount时 后续的hook
+		// mount时 useState后续的hook
 		workInProgressHook.next = hook;
 		workInProgressHook = hook;
 	}
@@ -130,7 +130,7 @@ function updateWorkInProgressHook(): Hook {
 	let nextCurrentHook: Hook | null;
 	if (currentHook === null) {
 		// 这是这个FC update时候的第一个hook
-		const current = currentlyRenderingFiber?.alternate;
+		const current = currentlyRenderingFiber?.alternate; // 上一次操作时拿到的fiber
 		if (current !== null) {
 			nextCurrentHook = current?.memoizedState;
 		} else {

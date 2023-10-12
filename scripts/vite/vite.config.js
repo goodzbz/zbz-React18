@@ -13,6 +13,7 @@ export default defineConfig({
 			preventAssignment: true,
 		}),
 	],
+	build: {},
 	resolve: {
 		alias: [
 			{

@@ -33,7 +33,7 @@ export const commitMutationEffects = (finishedWork: FiberNode) => {
 		} else {
 			// 向上遍历 DFS
 			up: while (nextEffect !== null) {
-				commitMutationEffectsOnFiber(nextEffect);
+				commitMutationEffectsOnFiber(nextEffect); // 思考 这里不会重复处理同一个节点么  父节点，父节点下面的节点 可能会同时操作
 				const sibling: FiberNode | null = nextEffect.sibling;
 				if (sibling !== null) {
 					nextEffect = sibling;
@@ -174,7 +174,7 @@ function appendPlacementNodeIntoContainer(
 	const child = finshedWork.child;
 	if (child !== null) {
 		appendPlacementNodeIntoContainer(child, hostParent);
-		let sibling = child.sibling;
+		let sibling = child.sibling; // 对child的sibling 的情况是什么    xxx  这里有一个思考是fragment 但是不确定 后续还需要思考
 		while (sibling) {
 			appendPlacementNodeIntoContainer(sibling, hostParent);
 			sibling = sibling.sibling;

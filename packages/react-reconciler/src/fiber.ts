@@ -79,8 +79,6 @@ export const createWorkInProcess = (
 		wip.alternate = current;
 		current.alternate = wip;
 	} else {
-		// 为什么更新的时候要这么设计
-		// update   更新不应该是很多东西都发生变化么
 		wip.pendingProps = pendingProps;
 		wip.flags = NoFlags;
 		wip.subtreeFlags = NoFlags;
