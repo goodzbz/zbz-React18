@@ -1,7 +1,9 @@
 import {
 	Container,
+	Instance,
 	appendChildToContainer,
 	commitUpdate,
+	insertChildToContainer,
 	removeChild,
 } from 'hostConfig';
 import { FiberNode, FiberRootNode } from './fiber';
@@ -36,6 +38,7 @@ export const commitMutationEffects = (finishedWork: FiberNode) => {
 				commitMutationEffectsOnFiber(nextEffect); // 思考 这里不会重复处理同一个节点么  父节点，父节点下面的节点 可能会同时操作
 				const sibling: FiberNode | null = nextEffect.sibling;
 				if (sibling !== null) {
+					// 这个属于什么情况
 					nextEffect = sibling;
 					break up;
 				}
@@ -140,11 +143,49 @@ const commitPlacement = (finshedWork: FiberNode) => {
 		console.warn('执行Placement操作', finshedWork);
 	}
 	const hostParent = getHostParent(finshedWork);
+
+	//host sibing
+	const sibling = getHostSibling(finshedWork);
+
 	// finishedWork ~ Dom append parentDom
 	if (hostParent !== null) {
-		appendPlacementNodeIntoContainer(finshedWork, hostParent);
+		insertOrAppendPlacementNodeIntoContainer(finshedWork, hostParent, sibling);
 	}
 };
+
+function getHostSibling(fiber: FiberNode) {
+	let node: FiberNode = fiber;
+	findSibing: while (true) {
+		while (node.sibling === null) {
+			const parent = node.return;
+			if (
+				parent === null ||
+				parent.tag === HostComponent ||
+				parent.tag === HostRoot
+			) {
+				return null;
+			}
+			node = parent;
+		}
+		node.sibling.return = node.return;
+		node = node.sibling;
+		while (node.tag !== HostText && node.tag !== HostComponent) {
+			// 向下遍历
+			if ((node.flags & Placement) !== NoFlags) {
+				continue findSibing;
+			}
+			if (node.child === null) {
+				continue findSibing;
+			} else {
+				node.child.return = node;
+				node = node.child;
+			}
+			if ((node.flags & Placement) === NoFlags) {
+				return node.stateNode;
+			}
+		}
+	}
+}
 
 function getHostParent(fiber: FiberNode): Container | null {
 	let parent = fiber.return;
@@ -163,20 +204,24 @@ function getHostParent(fiber: FiberNode): Container | null {
 	}
 	return null;
 }
-function appendPlacementNodeIntoContainer(
+function insertOrAppendPlacementNodeIntoContainer(
 	finshedWork: FiberNode,
-	hostParent: Container
+	hostParent: Container,
+	before?: Instance
 ) {
 	if (finshedWork.tag === HostComponent || finshedWork.tag === HostText) {
+		if (before) {
+			insertChildToContainer(finshedWork.stateNode, hostParent, before);
+		}
 		appendChildToContainer(finshedWork.stateNode, hostParent);
 		return;
 	}
 	const child = finshedWork.child;
 	if (child !== null) {
-		appendPlacementNodeIntoContainer(child, hostParent);
+		insertOrAppendPlacementNodeIntoContainer(child, hostParent);
 		let sibling = child.sibling; // 对child的sibling 的情况是什么    xxx  这里有一个思考是fragment 但是不确定 后续还需要思考
 		while (sibling) {
-			appendPlacementNodeIntoContainer(sibling, hostParent);
+			insertOrAppendPlacementNodeIntoContainer(sibling, hostParent);
 			sibling = sibling.sibling;
 		}
 	}

@@ -7,22 +7,24 @@ import ReactDOM from 'react-dom';
 // 	</div>
 // );
 function App() {
-	const [num, setNum] = React.useState(100);
+	const [num, setNum] = React.useState(0);
 	// setNum(100); re-render  render时期渲染是要报错的
 	console.log(1);
+	const arr =
+		num % 2 === 0
+			? [<li>1</li>, <li>2</li>, <li>3</li>]
+			: [<li>3</li>, <li>2</li>, <li>1</li>];
+	console.log(arr);
 	return (
 		<div
 			onClick={(e) => {
 				console.log(e.target);
+				setNum(num + 1);
 			}}
 		>
-			<span
-				onClick={(e) => {
-					console.log(e.target);
-				}}
-			>
-				this is a span
-			</span>
+			{arr.map((element) => {
+				return element;
+			})}
 		</div>
 	);
 }

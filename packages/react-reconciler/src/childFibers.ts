@@ -19,7 +19,7 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		const deletions = returnFiber.deletions;
 		if (deletions === null) {
 			returnFiber.deletions = [childToDelete];
-			returnFiber.flags |= ChildDeletion;
+			returnFiber.flags |= ChildDeletion; // 这里我有疑惑 为什么不在删除的元素傻瓜添加ChildDeletion
 		} else {
 			deletions.push(childToDelete);
 		}
@@ -178,7 +178,7 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		index: number,
 		element: any
 	) {
-		const keyToUse = element.key !== null ? element.key : element.index;
+		const keyToUse = element.key !== null ? element.key : index;
 		const before = existingChildren.get(keyToUse);
 		if (typeof element === 'string' || typeof element === 'number') {
 			// HostText
@@ -215,6 +215,10 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		currentFiber: FiberNode | null,
 		newChild?: ReactElementType
 	) {
+		// TODO 多节点的情况 ul> li*3
+		if (Array.isArray(newChild)) {
+			return reconcileChildrenArray(returnFiber, currentFiber, newChild);
+		}
 		if (typeof newChild === 'object' && newChild !== null) {
 			switch (newChild.$$typeof) {
 				case REACT_ELEMENT_TYPE:
@@ -226,11 +230,6 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 						console.warn('为实现的reconcile类型', newChild);
 					}
 			}
-		}
-
-		// TODO 多节点的情况 ul> li*3
-		if (Array.isArray(newChild)) {
-			return reconcileChildrenArray(returnFiber, currentFiber, newChild);
 		}
 
 		// HostText
