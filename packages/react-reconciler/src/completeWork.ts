@@ -13,6 +13,7 @@ import {
 } from './workTags';
 import { NoFlags, Update } from './fiberFlags';
 import { updateFiberProps } from 'react-dom/src/SyntheticEvent';
+import { Fragment } from './workTags';
 
 function markUpdate(fiber: FiberNode) {
 	fiber.flags |= Update;
@@ -58,6 +59,9 @@ export const completeWork = (wip: FiberNode) => {
 			bubbleProperties(wip);
 			return null;
 		case FunctionComponent:
+			bubbleProperties(wip);
+			return null;
+		case Fragment:
 			bubbleProperties(wip);
 			return null;
 		default:

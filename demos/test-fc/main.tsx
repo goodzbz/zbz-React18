@@ -6,27 +6,24 @@ function App() {
 	const [num, setNum] = useState(100);
 	// setNum(100); re-render  render时期渲染是要报错的
 	console.log(1);
+	const arr = [<li>1</li>, <li>2</li>, <li>3</li>];
 	return (
-		<div
-			onClick={(e) => {
-				console.log(e.target);
-			}}
-		>
-			<span
-				onClick={(e) => {
-					console.log(e.target);
-				}}
-			>
-				this is a span
-			</span>
-		</div>
+		<ul>
+			<>
+				<li>1</li>
+				<li>2</li>
+			</>
+			{arr}
+			<li>4</li>
+		</ul>
 	);
 }
 function Children() {
 	return (
-		<div>
+		<>
 			<span>big-react</span>
-		</div>
+			<span>big-react</span>
+		</>
 	);
 }
 
