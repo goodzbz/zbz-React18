@@ -1,8 +1,10 @@
+import { Lane } from 'react-reconciler/src/fiberLanes';
 import { Dispatch } from 'react/src/currentDispatcher';
 import type { Action } from 'shared/ReactTypes';
 
 export interface Update<State> {
 	action: Action<State>;
+	lane: Lane;
 	next: Update<any> | null;
 }
 export interface UpdateQueue<State> {
@@ -12,10 +14,14 @@ export interface UpdateQueue<State> {
 	dispatch: Dispatch<State> | null;
 }
 // 创建更新操作
-export const createUpdate = <State>(action: Action<State>): Update<State> => {
+export const createUpdate = <State>(
+	action: Action<State>,
+	lane: Lane
+): Update<State> => {
 	return {
 		action,
 		next: null,
+		lane,
 	};
 };
 export const createUpdateQueue = <State>() => {

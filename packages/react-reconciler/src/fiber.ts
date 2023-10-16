@@ -3,6 +3,7 @@ import { FunctionComponent, HostComponent, WorkTag } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
 import { Fragment } from './workTags';
+import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
 
 // ReactElement 数据--》 FiberNode 数据+关系 ----> 真实Dom
 // FiberNode
@@ -59,12 +60,16 @@ export class FiberRootNode {
 	container: Container;
 	current: FiberNode;
 	finishedWork: FiberNode | null; // 指向更新完成的hostRootFiber
+	pendingLanes: Lanes;
+	finishedLane: Lane;
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		// container 是元素  hostRootFiber
 		this.container = container;
 		this.current = hostRootFiber;
 		hostRootFiber.stateNode = this;
 		this.finishedWork = null;
+		this.pendingLanes = NoLanes;
+		this.finishedLane = NoLane;
 	}
 }
 

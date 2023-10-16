@@ -9,6 +9,7 @@ import {
 } from 'react/src/updateQueue';
 import { ReactElementType } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
+import { requestUpdateLane } from './fiberLanes';
 
 // 创建 FiberRootNode 和 HostRootFiber 并返回FiberRootNode
 export function createContainer(container: Container) {
@@ -24,13 +25,14 @@ export function updateContainer(
 	root: FiberRootNode
 ) {
 	const hostRootFiber = root.current;
-	const update = createUpdate<ReactElementType | null>(element); // 创建更新操作 element： 标签/State/State方法
+	const lane = requestUpdateLane();
+	const update = createUpdate<ReactElementType | null>(element, lane); // 创建更新操作 element： 标签/State/State方法
 	enqueueUpdate(
 		// 添加到队列中
 		hostRootFiber.updateQueue as UpdateQueue<ReactElementType | null>,
 		update
 	);
-	scheduleUpdateOnFiber(hostRootFiber); // hostRootFiber是
+	scheduleUpdateOnFiber(hostRootFiber, lane); // hostRootFiber是
 	return element;
 }
 
