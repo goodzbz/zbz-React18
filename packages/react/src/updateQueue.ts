@@ -15,6 +15,7 @@ export interface UpdateQueue<State> {
 export const createUpdate = <State>(action: Action<State>): Update<State> => {
 	return {
 		action,
+		next: null,
 	};
 };
 export const createUpdateQueue = <State>() => {
