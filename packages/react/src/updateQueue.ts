@@ -3,6 +3,7 @@ import type { Action } from 'shared/ReactTypes';
 
 export interface Update<State> {
 	action: Action<State>;
+	next: Update<any> | null;
 }
 export interface UpdateQueue<State> {
 	shared: {
@@ -31,6 +32,17 @@ export const enqueueUpdate = <State>(
 	updateQueue: UpdateQueue<State>,
 	update: Update<State>
 ) => {
+	updateQueue.shared.pending = update;
+	const pending = updateQueue.shared.pending;
+	if (pending === null) {
+		update.next = update;
+		// pending = a-> a
+		// pending =  b -> a ->b
+		// pending = c-> b -> a -> c
+	} else {
+		update.next = pending.next;
+		pending.next = update;
+	}
 	updateQueue.shared.pending = update;
 };
 // 消费更新操作
