@@ -4,6 +4,7 @@ import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
 import { Fragment } from './workTags';
 import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
+import { Effect } from './fiberHooks';
 
 // ReactElement 数据--》 FiberNode 数据+关系 ----> 真实Dom
 // FiberNode
@@ -54,6 +55,10 @@ export class FiberNode {
 	}
 }
 
+export interface PendingPassiveEffects {
+	unmount: Effect[];
+	update: Effect[];
+}
 // tag  FiberNode属于xx类型节点
 // FiberRootNode        根--》HostRootFiber ---》 app（一代标签）
 export class FiberRootNode {
@@ -62,6 +67,7 @@ export class FiberRootNode {
 	finishedWork: FiberNode | null; // 指向更新完成的hostRootFiber
 	pendingLanes: Lanes;
 	finishedLane: Lane;
+	pendingPassiveEffects: PendingPassiveEffects;
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		// container 是元素  hostRootFiber
 		this.container = container;
@@ -70,6 +76,11 @@ export class FiberRootNode {
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
 		this.finishedLane = NoLane;
+
+		this.pendingPassiveEffects = {
+			unmount: [],
+			update: [],
+		};
 	}
 }
 

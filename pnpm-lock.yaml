@@ -11,6 +11,9 @@ importers:
       '@rollup/plugin-replace':
         specifier: ^5.0.2
         version: registry.npmmirror.com/@rollup/plugin-replace@5.0.2(rollup@3.28.1)
+      scheduler:
+        specifier: ^0.23.0
+        version: registry.npmmirror.com/scheduler@0.23.0
     devDependencies:
       '@babel/core':
         specifier: ^7.22.17
@@ -39,6 +42,9 @@ importers:
       '@types/react-dom':
         specifier: 18.2.7
         version: registry.npmmirror.com/@types/react-dom@18.2.7
+      '@types/scheduler':
+        specifier: ^0.16.4
+        version: registry.npmmirror.com/@types/scheduler@0.16.4
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.5.0
         version: registry.npmmirror.com/@typescript-eslint/eslint-plugin@6.5.0(@typescript-eslint/parser@6.5.0)(eslint@8.48.0)(typescript@5.2.2)
@@ -4265,7 +4271,7 @@ packages:
     version: 18.2.21
     dependencies:
       '@types/prop-types': registry.npmmirror.com/@types/prop-types@15.7.5
-      '@types/scheduler': registry.npmmirror.com/@types/scheduler@0.16.3
+      '@types/scheduler': registry.npmmirror.com/@types/scheduler@0.16.4
       csstype: registry.npmmirror.com/csstype@3.1.2
 
   registry.npmmirror.com/@types/resolve@1.17.1:
@@ -4282,10 +4288,10 @@ packages:
     version: 0.12.0
     dev: false
 
-  registry.npmmirror.com/@types/scheduler@0.16.3:
-    resolution: {integrity: sha512-5cJ8CB4yAx7BH1oMvdU0Jh9lrEXyPkar6F9G/ERswkCuvP4KQZfZkSjcMbAICCpQTN4OuZn8tz0HiKv9TGZgrQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/scheduler/-/scheduler-0.16.3.tgz}
+  registry.npmmirror.com/@types/scheduler@0.16.4:
+    resolution: {integrity: sha512-2L9ifAGl7wmXwP4v3pN4p2FLhD0O1qsJpvKmNin5VA8+UvNVb447UDaAEV6UdrkA+m/Xs58U1RFps44x6TFsVQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/scheduler/-/scheduler-0.16.4.tgz}
     name: '@types/scheduler'
-    version: 0.16.3
+    version: 0.16.4
 
   registry.npmmirror.com/@types/semver@7.5.1:
     resolution: {integrity: sha512-cJRQXpObxfNKkFAZbJl2yjWtJCqELQIdShsogr1d2MilP8dKD9TE/nEKHkJgUNHdGKCQaf9HbIynuV2csLGVLg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/semver/-/semver-7.5.1.tgz}
