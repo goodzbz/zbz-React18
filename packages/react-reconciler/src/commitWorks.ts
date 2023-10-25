@@ -65,14 +65,8 @@ const commitMutationEffectsOnFiber = (
 		commitPlacement(finishedWork);
 		finishedWork.flags &= ~Placement;
 	}
-	// flags Update
-	if ((flags & Update) !== NoFlags) {
-		commitUpdate(finishedWork);
-		finishedWork.flags &= ~Update;
-	}
 	// flags ChildDelete
 	if ((flags & ChildDeletion) !== NoFlags) {
-		commitUpdate(finishedWork);
 		const deletions = finishedWork.deletions;
 		if (deletions !== null) {
 			deletions.forEach((ChildToDelete) => {
@@ -81,6 +75,12 @@ const commitMutationEffectsOnFiber = (
 		}
 		finishedWork.flags &= ~ChildDeletion;
 	}
+	// flags Update
+	if ((flags & Update) !== NoFlags) {
+		commitUpdate(finishedWork);
+		finishedWork.flags &= ~Update;
+	}
+
 	if ((flags & PassiveEffect) !== NoFlags) {
 		// 收集回调
 		commitPassiveEffect(finishedWork, root, 'update');
@@ -161,12 +161,12 @@ function recordHostChildrenToDelete(
 		childrenToDelete.push(unmountFiber);
 	} else {
 		let node = lastOne.sibling;
-		while (node! === null) {
+		while (node !== null) {
 			if (unmountFiber === node) {
 				childrenToDelete.push(unmountFiber);
 			}
+			node = node.sibling;
 		}
-		node = node.sibling;
 	}
 	// 2 每找到一个host节点 判断下 这个节点是不是 1 找到那个节点的兄弟节点
 }
@@ -182,7 +182,7 @@ function commitDeletion(ChildToDelete: FiberNode, root: FiberRootNode) {
 				return;
 			case HostText:
 				recordHostChildrenToDelete(rootChildrenToDelete, unmountFiber);
-				break;
+				return;
 			case FunctionComponent:
 				// TODO useEffect unmount\ 解绑ref
 				commitPassiveEffect(unmountFiber, root, 'unmount');

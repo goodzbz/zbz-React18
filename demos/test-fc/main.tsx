@@ -1,31 +1,21 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-console.log(ReactDOM);
 function App() {
-	const [num, updateNum] = useState(0);
-	// setNum(100); re-render  render时期渲染是要报错的
-	useEffect(() => {
-		console.log('App mount');
-	}, []);
-	useEffect(() => {
-		console.log('num change create', num);
-		return () => {
-			console.log('num change destroy', num);
-		};
-	});
+	const [num, updateNum] = useState(100);
+
 	return (
-		<div onClick={() => updateNum((num) => num + 1)}>
-			{num === 0 ? <Children /> : 'noop'}
-		</div>
+		<ul onClick={() => updateNum(50)}>
+			{new Array(num).fill(0).map((_, i) => {
+				return <Children key={i}>{i}</Children>;
+			})}
+		</ul>
 	);
 }
-function Children() {
-	useEffect(() => {
-		console.log('child mount');
-		return () => console.log('child unmount');
-	});
-	return 'i am child';
+function Children({ children }) {
+	const now = performance.now();
+	while (performance.now() - now < 4) {}
+	return <li>{children}</li>;
 }
 
 ReactDOM.createRoot(document.querySelector('#root') as HTMLElement).render(

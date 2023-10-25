@@ -5,6 +5,7 @@ import { Container } from 'hostConfig';
 import { Fragment } from './workTags';
 import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
 import { Effect } from './fiberHooks';
+import { CallbackNode } from 'scheduler';
 
 // ReactElement 数据--》 FiberNode 数据+关系 ----> 真实Dom
 // FiberNode
@@ -68,6 +69,10 @@ export class FiberRootNode {
 	pendingLanes: Lanes;
 	finishedLane: Lane;
 	pendingPassiveEffects: PendingPassiveEffects;
+
+	callbackNode: CallbackNode | null;
+	callbakcPriority: Lane;
+
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		// container 是元素  hostRootFiber
 		this.container = container;
@@ -76,6 +81,9 @@ export class FiberRootNode {
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
 		this.finishedLane = NoLane;
+
+		this.callbackNode = null;
+		this.callbakcPriority = NoLane;
 
 		this.pendingPassiveEffects = {
 			unmount: [],
