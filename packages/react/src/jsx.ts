@@ -54,7 +54,7 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
 		}
 		if (prop === 'ref') {
 			if (val != undefined) {
-				ref = '' + val;
+				ref = val;
 			}
 			continue;
 		}
@@ -89,7 +89,7 @@ export const jsxDEV = (type: ElementType, config: any) => {
 		}
 		if (prop === 'ref') {
 			if (val != undefined) {
-				ref = '' + val;
+				ref = val;
 			}
 			continue;
 		}

@@ -77,12 +77,14 @@ const HooksDispatcherOnMount: Dispatcher = {
 	useState: mountState,
 	useEffect: mountEffect,
 	useTransition: mountTransition,
+	useRef: mountRef,
 };
 
 const HooksDispatcherOnUpdate: Dispatcher = {
 	useState: updateState,
 	useEffect: updateEffect,
 	useTransition: updateTransition,
+	useRef: updateRef,
 };
 
 function mountEffect(create: EffectCallback | void, deps: EffectDeps | void) {
@@ -184,7 +186,7 @@ function createFCUpdateQueue<State>() {
 }
 
 function updateState<State>(
-	initialState: () => State | State
+	initialState: (() => State) | State
 ): [State, Dispatch<State>] {
 	// 找到当前useState对应的hook数据
 	const hook = updateWorkInProgressHook();
@@ -224,7 +226,7 @@ function updateState<State>(
 }
 
 function mountState<State>(
-	initialState: () => State | State
+	initialState: (() => State) | State
 ): [State, Dispatch<State>] {
 	//
 	const hook = mountWorkInProgressHook();
@@ -247,6 +249,18 @@ function mountState<State>(
 	return [memoizedState, dispatch];
 }
 
+function mountRef<T>(initialValue: T): { current: T } {
+	const hook = mountWorkInProgressHook();
+	const ref = { current: initialValue };
+	hook.memoizedState = ref;
+	return ref;
+}
+
+function updateRef<T>(initialValue: T): { current: T } {
+	const hook = updateWorkInProgressHook();
+	return hook.memoizedState;
+}
+
 function mountTransition(): [boolean, (callback: () => void) => void] {
 	const [isPending, setPending] = mountState<boolean>(false);
 	const hook = mountWorkInProgressHook();
@@ -256,7 +270,7 @@ function mountTransition(): [boolean, (callback: () => void) => void] {
 }
 
 function updateTransition(): [boolean, (callback: () => void) => void] {
-	const [isPending] = updateState();
+	const [isPending] = updateState<boolean>(true);
 	const hook = updateWorkInProgressHook();
 	const start = hook.memoizedState;
 	return [isPending as boolean, start];
@@ -266,7 +280,6 @@ function startTransition(setPending: Dispatch<boolean>, callback: () => void) {
 	setPending(true);
 	const preTransition = currentBatchConfig.transition;
 	currentBatchConfig.transition = 1;
-
 	callback();
 	setPending(false);
 	currentBatchConfig.transition = preTransition;
