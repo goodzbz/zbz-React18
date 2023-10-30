@@ -3,8 +3,12 @@ import {
 	Instance,
 	appendChildToContainer,
 	commitUpdate,
+	hideInstance,
+	hideTextIntance,
 	insertChildToContainer,
 	removeChild,
+	unhideInstance,
+	unhideTextInstance,
 } from 'hostConfig';
 import { FiberNode, FiberRootNode, PendingPassiveEffects } from './fiber';
 import {
@@ -18,12 +22,14 @@ import {
 	Placement,
 	Ref,
 	Update,
+	Visibility,
 } from './fiberFlags';
 import {
 	FunctionComponent,
 	HostComponent,
 	HostRoot,
 	HostText,
+	OffscreenComponent,
 } from './workTags';
 import { Effect, FCUpdateQueue } from './fiberHooks';
 import { HookHasEffect } from './hookEffectTags';
@@ -94,7 +100,77 @@ const commitMutationEffectsOnFiber = (
 		//
 		safelyDetachRef(finishedWork);
 	}
+	if ((flags & Visibility) !== NoFlags && tag === OffscreenComponent) {
+		const isHidden = finishedWork.pendingProps.mode === 'hidden';
+		// ...
+		hidenOrUnhideAllChildren(finishedWork, isHidden);
+		finishedWork.flags &= ~Visibility;
+	}
 };
+
+function hidenOrUnhideAllChildren(finishedWork: FiberNode, isHidden: boolean) {
+	findHostSubtreeRoot(finishedWork, (hostRoot) => {
+		const instance = hostRoot.stateNode;
+		if (hostRoot.tag === HostComponent) {
+			isHidden ? hideInstance(instance) : unhideInstance(instance);
+		} else if (hostRoot.tag === HostText) {
+			isHidden
+				? hideTextIntance(instance)
+				: unhideTextInstance(instance, hostRoot.memoizedProps.content);
+		}
+	});
+}
+
+function findHostSubtreeRoot(
+	finishedWork: FiberNode,
+	callback: (hostSubtreeRoot: FiberNode) => void
+) {
+	let node = finishedWork;
+	let hostSubtreeRoot = null;
+
+	while (true) {
+		// TODO
+		if (node.tag === HostComponent) {
+			if (hostSubtreeRoot === null) {
+				hostSubtreeRoot = node;
+				callback(node);
+			}
+		} else if (node.tag === HostText) {
+			if (hostSubtreeRoot === null) {
+				callback(node);
+			}
+		} else if (
+			node.tag === OffscreenComponent &&
+			node.pendingProps.mode === 'hidden' &&
+			node !== finishedWork
+		) {
+			//
+		} else if (node.child !== null) {
+			node.child.return = node;
+			node = node.child;
+			continue;
+		}
+		if (node === finishedWork) {
+			return;
+		}
+
+		while (node.sibling === null) {
+			if (node.return === null || node.return === finishedWork) {
+				return;
+			}
+
+			if (hostSubtreeRoot === node) {
+				hostSubtreeRoot = null;
+			}
+			node = node.return;
+		}
+		if (hostSubtreeRoot === node) {
+			hostSubtreeRoot = null;
+		}
+		node.sibling.return = node.return;
+		node = node.sibling;
+	}
+}
 
 function safelyDetachRef(current: FiberNode) {
 	const ref = current.ref;

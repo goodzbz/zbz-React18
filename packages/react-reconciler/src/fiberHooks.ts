@@ -9,12 +9,14 @@ import {
 	enqueueUpdate,
 	processUpdataQueue,
 } from 'react/src/updateQueue';
-import { Action } from 'shared/ReactTypes';
+import { Action, ReactContext, Thenable, Usable } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
 import { Lane, NoLane, requestUpdateLane } from './fiberLanes';
 import { Flags, PassiveEffect } from './fiberFlags';
 import { HookHasEffect, Passive } from './hookEffectTags';
 import currentBatchConfig from 'react/src/currentBatchConfig';
+import { REACT_CONTEXT_TYPE } from 'shared/ReactSymbols';
+import { trackUsedThenable } from './thenable';
 
 let currentlyRenderingFiber: FiberNode | null = null; // 当前的fiber树
 let workInProgressHook: Hook | null = null; //挂载时操作的Hook
@@ -78,6 +80,8 @@ const HooksDispatcherOnMount: Dispatcher = {
 	useEffect: mountEffect,
 	useTransition: mountTransition,
 	useRef: mountRef,
+	useContext: readContext,
+	use,
 };
 
 const HooksDispatcherOnUpdate: Dispatcher = {
@@ -85,6 +89,8 @@ const HooksDispatcherOnUpdate: Dispatcher = {
 	useEffect: updateEffect,
 	useTransition: updateTransition,
 	useRef: updateRef,
+	useContext: readContext,
+	use,
 };
 
 function mountEffect(create: EffectCallback | void, deps: EffectDeps | void) {
@@ -360,4 +366,33 @@ function mountWorkInProgressHook(): Hook {
 		workInProgressHook = hook;
 	}
 	return workInProgressHook;
+}
+
+function readContext<T>(context: ReactContext<T>): T {
+	const consumer = currentlyRenderingFiber;
+	if (consumer === null) {
+		throw new Error('只能在函数组件中 使用 useContext');
+	}
+	const value = context._currentValue;
+	return value;
+}
+
+function use<T>(usable: Usable<T>): T {
+	if (usable !== null && typeof usable === 'object') {
+		if (typeof (usable as Thenable<T>).then === 'function') {
+			// thenable
+			const thenable = usable as Thenable<T>;
+			return trackUsedThenable(thenable);
+		} else if ((usable as ReactContext<T>).$$typeof === REACT_CONTEXT_TYPE) {
+			const context = usable as ReactContext<T>;
+			return readContext(context);
+		}
+	}
+	throw new Error('不支持的use参数' + usable);
+}
+
+export function resetHooksOnUnwind() {
+	currentlyRenderingFiber = null;
+	currentHook = null;
+	workInProgressHook = null;
 }

@@ -6,14 +6,18 @@ import {
 } from 'hostConfig';
 import { FiberNode } from './fiber';
 import {
+	ContextProvider,
 	FunctionComponent,
 	HostComponent,
 	HostRoot,
 	HostText,
+	OffscreenComponent,
+	SuspenseComponent,
 } from './workTags';
-import { NoFlags, Ref, Update } from './fiberFlags';
+import { NoFlags, Ref, Update, Visibility } from './fiberFlags';
 import { updateFiberProps } from 'react-dom/src/SyntheticEvent';
 import { Fragment } from './workTags';
+import { popProvider } from './fiberContext';
 
 function markRef(fiber: FiberNode) {
 	fiber.flags |= Ref;
@@ -75,6 +79,34 @@ export const completeWork = (wip: FiberNode) => {
 			return null;
 		case Fragment:
 			bubbleProperties(wip);
+			return null;
+		case ContextProvider:
+			const context = wip.type._context;
+			popProvider(context);
+			bubbleProperties(wip);
+			return null;
+		case OffscreenComponent:
+			bubbleProperties(wip);
+			return null;
+		case SuspenseComponent:
+			const offscreenFiber = wip.child as FiberNode;
+			const isHidden = offscreenFiber.pendingProps.mode === 'hidden';
+			const currentOffscreenFiber = offscreenFiber.alternate;
+
+			if (currentOffscreenFiber !== null) {
+				// update
+				const wasHidden = currentOffscreenFiber.pendingProps.mode === 'hidden';
+				if (isHidden !== wasHidden) {
+					offscreenFiber.flags |= Visibility;
+					bubbleProperties(offscreenFiber);
+				}
+			} else if (isHidden) {
+				offscreenFiber.flags |= Visibility;
+				bubbleProperties(offscreenFiber);
+			}
+			bubbleProperties(wip);
+
+			//...
 			return null;
 		default:
 			if (__DEV__) {

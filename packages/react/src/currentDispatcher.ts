@@ -1,10 +1,12 @@
-import { Action } from 'shared/ReactTypes';
+import { Action, ReactContext, Usable } from 'shared/ReactTypes';
 
 export type Dispatcher = {
 	useState: <T>(initialState: () => T | T) => [T, Dispatch<T>];
 	useEffect: (callback: () => void | void, deps: any[] | void) => void;
 	useTransition: () => [boolean, (callback: () => void) => void];
 	useRef: <T>(initialValue: T) => { current: T };
+	useContext: <T>(context: ReactContext<T>) => T;
+	use: <T>(usable: Usable<T>) => T;
 };
 export type Dispatch<State> = (action: Action<State>) => void;
 const currentDispatcher: { current: Dispatcher | null } = {

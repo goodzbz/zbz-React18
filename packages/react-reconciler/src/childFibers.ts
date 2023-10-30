@@ -136,6 +136,7 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		let current = currentFirstChild;
 		while (current !== null) {
 			const keyToUse = current.key !== null ? current.key : current.index;
+			// const keyToUse = getElementKeyToUse(current);
 			existingChildren.set(keyToUse, current);
 			current = current.sibling;
 		}
@@ -183,13 +184,27 @@ function ChildReconciler(shouldTrackEffect: boolean) {
 		return fistNewFiber;
 	}
 
+	function getElementKeyToUse(element: any, index?: number) {
+		if (
+			Array.isArray(element) ||
+			typeof element == 'string' ||
+			typeof element === 'number' ||
+			element === undefined ||
+			element === null
+		) {
+			return index;
+		}
+		return element.key !== null ? element.key : index;
+	}
+
 	function updateFormMap(
 		returnFiber: FiberNode,
 		existingChildren: ExistingChildren,
 		index: number,
 		element: any
 	) {
-		const keyToUse = element.key !== null ? element.key : index;
+		// const keyToUse = element.key !== null ? element.key : index;
+		const keyToUse = getElementKeyToUse(element, index);
 		const before = existingChildren.get(keyToUse);
 		// hostText
 		if (typeof element === 'string' || typeof element === 'number') {

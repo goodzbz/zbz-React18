@@ -2,6 +2,7 @@ import { FiberNode } from 'react-reconciler/src/fiber';
 import { HostComponent, HostText } from 'react-reconciler/src/workTags';
 import { DOMElement, updateFiberProps } from './SyntheticEvent';
 import { Props } from 'shared/ReactTypes';
+import { flushSyncCallbacks } from 'react-reconciler/src/syncTaskQueue';
 
 export type Container = any;
 export type Instance = Element;
@@ -71,3 +72,21 @@ export const scheduleMicroTask =
 		: typeof Promise === 'function'
 		? (callback: (...arg: any) => void) => Promise.resolve(null).then(callback)
 		: setTimeout;
+
+export function hideInstance(instance: Instance) {
+	const style = (instance as HTMLElement).style;
+	style.setProperty('display', 'none', 'important');
+}
+
+export function unhideInstance(instance: Instance) {
+	const style = (instance as HTMLElement).style;
+	style.display = '';
+}
+
+export function hideTextIntance(textInstance: TextInstance) {
+	textInstance.nodeValue = '';
+}
+
+export function unhideTextInstance(textInstance: TextInstance, text: string) {
+	textInstance.nodeValue = text;
+}
