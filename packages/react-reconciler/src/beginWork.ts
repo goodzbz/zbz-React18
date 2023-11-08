@@ -237,6 +237,10 @@ function updateHostRoot(wip: FiberNode, renderLane: Lane) {
 	updateQueue.shared.pending = null;
 	const { memoizedState } = processUpdataQueue(baseState, pending, renderLane);
 	// null
+	const current = wip.alternate;
+	if (current !== null) {
+		current.memoizedState = memoizedState;
+	}
 	wip.memoizedState = memoizedState;
 	const nextChildren = wip.memoizedState;
 	reconcileChildren(wip, nextChildren); // 返回子FiberNode

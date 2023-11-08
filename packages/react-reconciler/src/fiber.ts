@@ -1,4 +1,4 @@
-import { Props, Key, Ref, ReactElementType } from 'shared/ReactTypes';
+import { Props, Key, Ref, ReactElementType, Wakeable } from 'shared/ReactTypes';
 import {
 	ContextProvider,
 	FunctionComponent,
@@ -84,6 +84,9 @@ export class FiberRootNode {
 
 	// WeakMap {promise: Set<Lane>}
 	pingCache: WeakMap<Wakeable<any>, Set<Lane>> | null;
+	suspendedLanes: Lanes; // 当前所有被挂起的更新
+	pingLanes: Lane; // 当前被挂起且被ping的
+
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		// container 是元素  hostRootFiber
 		this.container = container;
@@ -91,6 +94,9 @@ export class FiberRootNode {
 		hostRootFiber.stateNode = this;
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
+		this.suspendedLanes = NoLanes;
+		this.pingLanes = NoLanes;
+
 		this.finishedLane = NoLane;
 
 		this.callbackNode = null;
