@@ -21,7 +21,7 @@ import { renderWithHooks } from './fiberHooks';
 import { Lane } from './fiberLanes';
 import { ChildDeletion, Placement, Ref } from './fiberFlags';
 import { pushProvider } from './fiberContext';
-import { createElement } from 'react';
+import { pushSuspenseHandler } from './suspenseContext';
 
 export interface OffscreenProps {
 	mode: 'visible' | 'hidden';
@@ -68,6 +68,8 @@ function updateSuspenseComponent(wip: FiberNode) {
 	}
 	const nextPrimaryChildren = nextProps.children;
 	const nextFallbackChildren = nextProps.fallback;
+
+	pushSuspenseHandler(wip);
 
 	if (current === null) {
 		// mount

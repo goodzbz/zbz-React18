@@ -28,7 +28,7 @@ export class FiberNode {
 	sibling: FiberNode | null; // 兄弟
 	child: FiberNode | null; // 儿子
 	index: number; // 儿子标号
-	ref: Ref;
+	ref: Ref | null;
 	flags: Flags; // 操作标记
 
 	memoizedState: any;
@@ -82,6 +82,8 @@ export class FiberRootNode {
 	callbackNode: CallbackNode | null;
 	callbakcPriority: Lane;
 
+	// WeakMap {promise: Set<Lane>}
+	pingCache: WeakMap<Wakeable<any>, Set<Lane>> | null;
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		// container 是元素  hostRootFiber
 		this.container = container;
@@ -98,6 +100,7 @@ export class FiberRootNode {
 			unmount: [],
 			update: [],
 		};
+		this.pingCache = null;
 	}
 }
 
